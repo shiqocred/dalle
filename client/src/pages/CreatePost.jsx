@@ -11,16 +11,17 @@ const CreatePost = () => {
   const [form, setForm] = useState({
     name: '',
     prompt: '',
-    photo: ''
+    photo: '',
   })
   const [generatingImg, setGeneratingImg] = useState(false)
   const [loading, setLoading] = useState(false)
+  const apiURL = 'https://api.shiqocred.co/v1/post'
 
   const generateImage = async () => {
     if (form.prompt) {
       try {
         setGeneratingImg(true)
-        const response = await fetch('http://54.179.2.46/api/v1/dalle', {
+        const response = await fetch(apiURL, {
           method: 'POST',
           headers: {
             'Content-Type' : 'application/json'
@@ -37,7 +38,7 @@ const CreatePost = () => {
         setGeneratingImg(false)
       }
     } else {
-      alert('Please enter a prompt')
+      alert('Please provide proper prompt')
     }
   }
   const handleSubmit = async (e) => {
@@ -46,12 +47,12 @@ const CreatePost = () => {
     if (form.prompt && form.photo) {
       setLoading(true);
       try {
-        const response = await fetch('http://54.179.2.46/api/v1/post', {
+        const response = await fetch(apiURL, {
           method: 'POST',
           headers: {
             'Content-Type' : 'application/json'
           },
-          body: JSON.stringify(form)
+          body: JSON.stringify({ ...form })
         })
 
         await response.json();
@@ -65,9 +66,8 @@ const CreatePost = () => {
       alert('Please enter a prompt and generate an image')
     }
   }
-  const handleChange = (e) => {
-    setForm({...form, [e.target.name]: e.target.value})
-  }
+  const handleChange = (e) => setForm({...form, [e.target.name]: e.target.value})
+
   const handleSupriseMe = () => {
     const randomPrompt = getRandomPrompt(form.prompt)
     setForm({...form, prompt: randomPrompt})
